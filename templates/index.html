@@ -1,16 +1,21 @@
 <html>
 <head>
-<title></title>
-<style>
-</style>
+<title>Youtube Instant</title>
+<link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/static/index.css">
 </head>
 
 <body>
+	<h1>Youtube Instant</h1>
 	<form>
 		<input type="text" id="query">
 	</form>
-	<div id="player"></div>
 
+	<div id="playerContainer">
+		<button class="btn" id="previous"><</button>
+		<div id="player"></div>
+		<button class="btn" id="next">></button>
+	</div>
 	<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
     <script>
 
@@ -44,27 +49,27 @@
       // 5. The API calls this function when the player's state changes.
       //    The function indicates that when playing a video (state=1),
       //    the player should play for six seconds and then stop.
-      var done = false;
       function onPlayerStateChange(event) {
-        if (event.data == YT.PlayerState.PLAYING && !done) {
-          setTimeout(stopVideo, 6000);
-          done = true;
-        }
       }
       function stopVideo() {
         player.stopVideo();
       }
 
+     var counter = 0;
+     var xhr = [];
      $('#query').keyup(function(){
      	    var queryStr = $('#query').val();
 	      	var url = '/search/' + queryStr;
-	      	var xhr = $.get(url, function(data){
-	      		var id = findVideoId(data);
-	      		player.loadVideoById({videoId: id});
-	        });
+	      	xhr[counter] = $.get(url, function(data){
+	      		loadVideos(data);
+	      	});
+	        if (xhr[counter-1]) {
+	        	xhr[counter-1].abort();
+	        }
+	        counter++;
 	 });
 
-	function findVideoId(xml){
+	function loadVideos(xml){
 		var idArr = xml.getElementsByTagName('id');
 		var vArr = [];
 		
@@ -73,7 +78,26 @@
 			if (matches != null) 
 				vArr.push(matches[2]);
 		}
-		return vArr[0];
+		var vIndex = 0;
+	    player.loadVideoById({videoId: vArr[vIndex]});
+
+	    $('#previous').click(function(){
+	    	if (vIndex > 0){
+	    		vIndex--;
+	    	} else {
+	    		vIndex = vArr.length - 1;
+	    	}
+	    	player.loadVideoById({videoId: vArr[vIndex]});
+	    })
+
+  		$('#next').click(function(){
+  			if (vIndex < vArr.length - 1){
+  				vIndex++;
+  			} else {
+  				vIndex = 0;
+  			}
+  			player.loadVideoById({videoId: vArr[vIndex]});
+  		});
 	}
 
 	</script>

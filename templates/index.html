@@ -58,10 +58,10 @@
      $('#query').keyup(function(){
      	    var queryStr = $('#query').val();
 	      	var url = '/search/' + queryStr;
-	      	$.get(url, function(data){
+	      	var xhr = $.get(url, function(data){
 	      		var id = findVideoId(data);
 	      		player.loadVideoById({videoId: id});
-	      	});
+	        });
 	 });
 
 	function findVideoId(xml){

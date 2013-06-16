@@ -1,0 +1,16 @@
+body {
+	margin: 10px;
+	position: relative;
+}
+
+#previous {
+	height: 380px;
+	position: relative;
+	bottom: 190px;
+}
+
+#next {
+	height: 380px;
+	position: relative;
+	bottom: 190px;
+}

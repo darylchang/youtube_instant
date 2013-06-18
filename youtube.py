@@ -9,7 +9,7 @@ def index():
 
 @app.route("/search/<queryStr>")
 def search(queryStr):
-	xml = requests.get('http://gdata.youtube.com/feeds/api/videos?q=' + queryStr + '&orderby=published&start-index=11&max-results=10&v=2')
+	xml = requests.get('http://gdata.youtube.com/feeds/api/videos?q=' + queryStr + '&start-index=1&max-results=10&v=2')
 	return Response(xml, mimetype='text/xml')
 
 if __name__ == "__main__":

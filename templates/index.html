@@ -59,16 +59,19 @@
 
      var counter = 0;
      var xhr = [];
+     var queryStr;
      $('#query').keyup(function(){
-     	    var queryStr = $('#query').val();
-	      	var url = '/search/' + queryStr;
-	      	xhr[counter] = $.get(url, function(data){
-	      		loadVideos(data);
-	      	});
-	        if (xhr[counter-1]) {
-	        	xhr[counter-1].abort();
-	        }
-	        counter++;
+     		if (queryStr != $('#query').val()){
+	     	    queryStr = $('#query').val();
+		      	var url = 'http://gdata.youtube.com/feeds/api/videos?q=' + queryStr + '&start-index=1&max-results=10&v=2';
+		      	xhr[counter] = $.get(url, function(data){
+		      		loadVideos(data);
+		      	});
+		        if (xhr[counter-1]) {
+		        	xhr[counter-1].abort();
+		        }
+		        counter++;
+		     }
 	 });
 
 	function loadVideos(xml){
@@ -81,23 +84,26 @@
 				vArr.push(matches[2]);
 		}
 		var vIndex = 0;
+
 	    player.loadVideoById({videoId: vArr[vIndex]});
 
-	    $('#previous').click(function(){
+	    $('#previous').off('click').click(function(){
 	    	if (vIndex > 0){
 	    		vIndex--;
 	    	} else {
 	    		vIndex = vArr.length - 1;
 	    	}
+	    	console.log(vArr[vIndex]);
 	    	player.loadVideoById({videoId: vArr[vIndex]});
 	    })
 
-  		$('#next').click(function(){
+  		$('#next').off('click').click(function(){
   			if (vIndex < vArr.length - 1){
   				vIndex++;
   			} else {
   				vIndex = 0;
   			}
+  			console.log(vArr[vIndex]);
   			player.loadVideoById({videoId: vArr[vIndex]});
   		});
 	}
